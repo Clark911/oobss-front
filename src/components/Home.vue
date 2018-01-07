@@ -94,6 +94,9 @@ export default {
     putTask: function() {
       var $this = this
       this.$http.post("http://localhost:8080/tasks",{name:$this.taskName}).then(function(response){
+        if(response.data.retCode != 1){
+            $this.$Message.error(response.data.errMsg);
+        }
         $this.homeTasks()
         $this.taskName = ''
       }).catch(function(error) {
@@ -105,7 +108,7 @@ export default {
         this.$Message.info('This is a info tip');
     },
     handleReachBottom (){
-        
+
     }
   }
 }
