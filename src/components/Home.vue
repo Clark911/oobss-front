@@ -1,0 +1,112 @@
+<style scoped>
+.task{
+  min-width: 200px;
+  width: 100;
+  min-height: 26px;
+  padding: 2px;
+  overflow: hidden;
+
+}
+.task:hover{
+    background-color: beige;
+}
+.task-text{
+  float: left;
+  max-width: 800px;
+  min-width: 180px;
+  word-break: break-all;
+  /* border: 1px solid black; */
+}
+.btn-finish{
+    float: right;
+    padding-top: 4px;
+}
+</style>
+
+<template>
+  <div>
+    <Card>
+      <div style="height: 100px">
+        <h1>拖后</h1>
+        <ul>
+        <li v-for="item in lastTasks" v-bind:key="item.id">{{ item.name }}({{item.time}})</li>
+        </ul>
+      </div>
+    </Card>
+
+    <Card>
+      <div style="height: 400px">
+        <h1>今日待办</h1>
+        <Scroll :on-reach-bottom="handleReachBottom">
+            <ul>
+            <li v-for="item in currentTasks" v-bind:key="item.id">
+                <div class="task" v-on:mouseenter="showDoneBtn">
+                    <div class="task-text">
+                        {{ item.name }}
+                    </div>
+                    <Icon type="checkmark-round" class="btn-finish"></Icon>
+                </div>
+            </li>
+            </ul>
+        </Scroll>
+        <input placeholder="添加任务······" v-on:keyup.enter="putTask" v-model="taskName">
+      </div>
+    </Card>
+
+    <Card>
+      <div style="height: 100px">
+        <h1>完成了</h1>
+        <ul>
+        <li v-for="item in finishedTasks" v-bind:key="item.id">{{ item.name }}</li>
+        </ul>
+      </div>
+    </Card>
+  </div>
+</template>
+<script>
+export default {
+  name: 'Home',
+  data () {
+    return {
+      currentTasks: [],
+      lastTasks: [],
+      finishedTasks: [],
+      taskName: ''
+    }
+  },
+  mounted() {
+    this.homeTasks()
+  },
+  methods: {
+    homeTasks: function(){
+      this.$Loading.start();
+      var $this = this
+      this.$http.get("http://localhost:8080/tasks/main").then(function(response) {
+        $this.currentTasks = response.data.data.currentTasks
+        $this.lastTasks = response.data.data.lastTasks
+        $this.finishedTasks = response.data.data.finishedTasks
+        $this.$Loading.finish();
+      }).catch(function(error) {
+        console.log(error)
+        $this.$Loading.error();
+      })
+    },
+    putTask: function() {
+      var $this = this
+      this.$http.post("http://localhost:8080/tasks",{name:$this.taskName}).then(function(response){
+        $this.homeTasks()
+        $this.taskName = ''
+      }).catch(function(error) {
+        console.log(error)
+      })
+    },
+    showDoneBtn: function(e) {
+        // console.log("hover");
+        this.$Message.info('This is a info tip');
+    },
+    handleReachBottom (){
+        
+    }
+  }
+}
+</script>

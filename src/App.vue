@@ -1,23 +1,26 @@
+<style>
+    .layout{
+        border: 1px solid #d7dde4;
+        background: #f5f7f9;
+        position: relative;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+</style>
 <template>
-  <div id="app">
-    <!-- <img src="./assets/logo.png"> -->
-    <router-view/>
-  </div>
-</template>
+    <div class="layout" id="app">
+        <Sider :style="{position: 'fixed', height: '100vh', left: 0, overflow: 'auto'}">
 
+        </Sider>
+        <Layout :style="{marginLeft: '200px'}">
+            <Content :style="{padding: '0 16px 16px'}">
+                <router-view/>
+            </Content>
+        </Layout>
+    </div>
+</template>
 <script>
 export default {
   name: 'app'
 }
 </script>
-
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
