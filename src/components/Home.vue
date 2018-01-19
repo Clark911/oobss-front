@@ -95,7 +95,7 @@ export default {
     homeTasks: function(){
       this.$Loading.start();
       var $this = this
-      this.$http.get("http://oobss.herokuapp.com/tasks/main").then(function(response) {
+      this.$http.get("http://api.oobss.com/tasks/main").then(function(response) {
         $this.currentTasks = response.data.data.currentTasks
         $this.lastTasks = response.data.data.lastTasks
         $this.finishedTasks = response.data.data.finishedTasks
@@ -107,7 +107,7 @@ export default {
     },
     putTask: function() {
       var $this = this
-      this.$http.post("http://oobss.herokuapp.com/tasks",{name:$this.taskName}).then(function(response){
+      this.$http.post("http://api.oobss.com/tasks",{name:$this.taskName}).then(function(response){
         if(response.data.retCode != 1){
             $this.$Message.error(response.data.errMsg);
         }
@@ -126,7 +126,7 @@ export default {
     fixTask: function(taskId){
       this.loading = true;
       var $this = this
-      this.$http.patch("http://oobss.herokuapp.com/tasks",{id:taskId}).then(function(response){
+      this.$http.patch("http://api.oobss.com/tasks",{id:taskId}).then(function(response){
         if(response.data.retCode != 1){
             $this.$Message.error(response.data.errMsg);
         }
@@ -139,7 +139,7 @@ export default {
     backTask: function(taskId){
       this.loading = true;
       var $this = this
-      this.$http.patch("http://oobss.herokuapp.com/tasks/back",{id:taskId}).then(function(response){
+      this.$http.patch("http://api.oobss.com/tasks/back",{id:taskId}).then(function(response){
         if(response.data.retCode != 1){
             $this.$Message.error(response.data.errMsg);
         }
@@ -152,7 +152,7 @@ export default {
     deleteTask: function(taskId){
       this.loading = true;
       var $this = this
-      this.$http.delete("http://oobss.herokuapp.com/tasks",{params:{id:taskId}}).then(function(response){
+      this.$http.delete("http://api.oobss.com/tasks",{params:{id:taskId}}).then(function(response){
         if(response.data.retCode != 1){
             $this.$Message.error(response.data.errMsg);
         }

@@ -3,6 +3,7 @@
 // see http://vuejs-templates.github.io/webpack for documentation.
 
 const path = require('path')
+const PORT = process.env.PORT || 5000
 
 module.exports = {
   dev: {
