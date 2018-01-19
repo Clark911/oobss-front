@@ -19,7 +19,7 @@
 }
 .btn-finish{
     float: right;
-    padding-top: 4px;
+    /* padding-top: 4px; */
     /* border: 1px solid black; */
 }
 </style>
@@ -46,13 +46,13 @@
                         {{ item.name }}
                     </div>
                     <div class="btn-finish">
-                      <Button type="text" shape="circle" icon="checkmark-round" v-bind:loading="loading"  v-on:click="fixTask(item.id)"></Button>
+                      <Button type="text" shape="circle" icon="checkmark-round" size="small" v-bind:loading="loading"  v-on:click="fixTask(item.id)"></Button>
                     </div>
                 </div>
             </li>
             </ul>
         </Scroll>
-        <input placeholder="添加任务······" v-on:keyup.enter="putTask" v-model="taskName">
+        <Input placeholder="添加任务······" v-on:on-enter="putTask" v-model="taskName"></Input>
       </div>
     </Card>
 
@@ -60,7 +60,17 @@
       <div style="height: 100px">
         <h1>完成了</h1>
         <ul>
-        <li v-for="item in finishedTasks" v-bind:key="item.id">{{ item.name }}</li>
+        <li v-for="item in finishedTasks" v-bind:key="item.id">
+          <div class="task" v-on:mouseenter="showBackBtn">
+            <div class="task-text">
+                {{ item.name }}
+            </div>
+            <div class="btn-finish">
+              <Button type="text" shape="circle" icon="reply" size="small" v-bind:loading="loading"  v-on:click="backTask(item.id)"></Button>
+              <Button type="text" shape="circle" icon="trash-a" size="small" v-bind:loading="loading"  v-on:click="deleteTask(item.id)"></Button>
+            </div>
+          </div>
+        </li>
         </ul>
       </div>
     </Card>
@@ -85,7 +95,7 @@ export default {
     homeTasks: function(){
       this.$Loading.start();
       var $this = this
-      this.$http.get("http://localhost:8090/tasks/main").then(function(response) {
+      this.$http.get("http://oobss.herokuapp.com/tasks/main").then(function(response) {
         $this.currentTasks = response.data.data.currentTasks
         $this.lastTasks = response.data.data.lastTasks
         $this.finishedTasks = response.data.data.finishedTasks
@@ -97,7 +107,7 @@ export default {
     },
     putTask: function() {
       var $this = this
-      this.$http.post("http://localhost:8090/tasks",{name:$this.taskName}).then(function(response){
+      this.$http.post("http://oobss.herokuapp.com/tasks",{name:$this.taskName}).then(function(response){
         if(response.data.retCode != 1){
             $this.$Message.error(response.data.errMsg);
         }
@@ -110,10 +120,39 @@ export default {
     showDoneBtn: function(e) {
         // debugger
     },
+    showBackBtn: function(e){
+
+    },
     fixTask: function(taskId){
       this.loading = true;
       var $this = this
-      this.$http.patch("http://localhost:8090/tasks",{id:taskId}).then(function(response){
+      this.$http.patch("http://oobss.herokuapp.com/tasks",{id:taskId}).then(function(response){
+        if(response.data.retCode != 1){
+            $this.$Message.error(response.data.errMsg);
+        }
+        $this.homeTasks()
+        $this.loading = false;
+      }).catch(function(error) {
+        console.log(error)
+      })
+    },
+    backTask: function(taskId){
+      this.loading = true;
+      var $this = this
+      this.$http.patch("http://oobss.herokuapp.com/tasks/back",{id:taskId}).then(function(response){
+        if(response.data.retCode != 1){
+            $this.$Message.error(response.data.errMsg);
+        }
+        $this.homeTasks()
+        $this.loading = false;
+      }).catch(function(error) {
+        console.log(error)
+      })
+    },
+    deleteTask: function(taskId){
+      this.loading = true;
+      var $this = this
+      this.$http.delete("http://oobss.herokuapp.com/tasks",{params:{id:taskId}}).then(function(response){
         if(response.data.retCode != 1){
             $this.$Message.error(response.data.errMsg);
         }
