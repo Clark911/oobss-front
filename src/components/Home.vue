@@ -29,9 +29,11 @@
     <Card>
       <div style="height: 100px">
         <h1>拖后</h1>
-        <ul>
-        <li v-for="item in lastTasks" v-bind:key="item.id">{{ item.name }}({{item.time}})</li>
-        </ul>
+        <Scroll :on-reach-bottom="handleReachBottom">
+          <ul>
+          <li v-for="item in lastTasks" v-bind:key="item.id">{{ item.name }}({{item.time}})</li>
+          </ul>
+        </Scroll>
       </div>
     </Card>
 
@@ -59,19 +61,21 @@
     <Card>
       <div style="height: 100px">
         <h1>完成了</h1>
-        <ul>
-        <li v-for="item in finishedTasks" v-bind:key="item.id">
-          <div class="task" v-on:mouseenter="showBackBtn">
-            <div class="task-text">
-                {{ item.name }}
+        <Scroll :on-reach-bottom="handleReachBottom">
+          <ul>
+          <li v-for="item in finishedTasks" v-bind:key="item.id">
+            <div class="task" v-on:mouseenter="showBackBtn">
+              <div class="task-text">
+                  {{ item.name }}
+              </div>
+              <div class="btn-finish">
+                <Button type="text" shape="circle" icon="reply" size="small" v-bind:loading="loading"  v-on:click="backTask(item.id)"></Button>
+                <Button type="text" shape="circle" icon="trash-a" size="small" v-bind:loading="loading"  v-on:click="deleteTask(item.id)"></Button>
+              </div>
             </div>
-            <div class="btn-finish">
-              <Button type="text" shape="circle" icon="reply" size="small" v-bind:loading="loading"  v-on:click="backTask(item.id)"></Button>
-              <Button type="text" shape="circle" icon="trash-a" size="small" v-bind:loading="loading"  v-on:click="deleteTask(item.id)"></Button>
-            </div>
-          </div>
-        </li>
-        </ul>
+          </li>
+          </ul>
+        </Scroll>
       </div>
     </Card>
   </div>
