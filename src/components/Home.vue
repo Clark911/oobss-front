@@ -5,7 +5,6 @@
   min-height: 26px;
   padding: 2px;
   overflow: hidden;
-
 }
 .task:hover{
     background-color: beige;
@@ -27,9 +26,9 @@
 <template>
   <div>
     <Card>
-      <div style="height: 100px">
+      <div style="height: 200px">
         <h1>拖后</h1>
-        <Scroll :on-reach-bottom="handleReachBottom">
+        <Scroll :on-reach-bottom="handleReachBottom" height="150">
           <ul>
           <li v-for="item in lastTasks" v-bind:key="item.id">{{ item.name }}({{item.time}})</li>
           </ul>
@@ -59,9 +58,9 @@
     </Card>
 
     <Card>
-      <div style="height: 100px">
+      <div style="height: 200px">
         <h1>完成了</h1>
-        <Scroll :on-reach-bottom="handleReachBottom">
+        <Scroll :on-reach-bottom="handleReachBottom" height="150">
           <ul>
           <li v-for="item in finishedTasks" v-bind:key="item.id">
             <div class="task" v-on:mouseenter="showBackBtn">
