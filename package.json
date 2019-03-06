@@ -15,11 +15,11 @@
   },
   "dependencies": {
     "axios": "^0.17.1",
+    "express": "^4.15.2",
     "iview": "^2.8.0",
     "muse-ui": "^2.1.0",
     "vue": "^2.5.2",
-    "vue-router": "^3.0.1",
-	"express": "^4.15.2"
+    "vue-router": "^3.0.1"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

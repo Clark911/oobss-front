@@ -7,19 +7,28 @@
   overflow: hidden;
 }
 .task:hover{
-    background-color: beige;
+  background-color: beige;
 }
 .task-text{
   float: left;
   max-width: 800px;
   min-width: 180px;
   word-break: break-all;
-  /* border: 1px solid black; */
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  white-space: normal;
 }
 .btn-finish{
-    float: right;
-    /* padding-top: 4px; */
-    /* border: 1px solid black; */
+  float: right;
+  /* padding-top: 4px; */
+  /* border: 1px solid black; */
+}
+.task-tooltip{
+  min-height: 100px;
+  max-width: 300px;
+  word-wrap: break-word;
 }
 </style>
 
@@ -30,7 +39,17 @@
         <h1>拖后</h1>
         <Scroll :on-reach-bottom="handleReachBottom" height="150">
           <ul>
-          <li v-for="item in lastTasks" v-bind:key="item.id">{{ item.name }}({{item.time}})</li>
+            <li v-for="item in lastTasks" v-bind:key="item.id">
+              <div class="task" v-on:mouseenter="showBackBtn">
+                <div class="task-text">
+                  {{ item.name }}({{item.time}})
+                </div>
+                <div class="btn-finish">
+                  <Button shape="circle" icon="reply" size="small" v-on:click="backTask(item.id)">Redo</Button>
+                  <Button type="dashed" shape="circle" icon="trash-a" size="small" v-on:click="deleteTask(item.id)"></Button>
+                </div>
+              </div>
+            </li>
           </ul>
         </Scroll>
       </div>
@@ -43,11 +62,18 @@
             <ul>
             <li v-for="item in currentTasks" v-bind:key="item.id">
                 <div class="task" v-on:mouseenter="showDoneBtn">
-                    <div class="task-text">
-                        {{ item.name }}
-                    </div>
+                    <Tooltip max-width="200" placement="top">
+                        <div class="task-text">
+                          {{ item.name }}
+                        </div>
+                        <div slot="content" class="task-tooltip">
+                  <p>Select a topic, then pick a category and we'll show you commonly asked questions and answers.</p>
+<p>Looking for more help? Ask the community or create a ticket to get it routed to the best person to answer it.</p>
+                        </div>
+                    </Tooltip>
                     <div class="btn-finish">
-                      <Button type="text" shape="circle" icon="checkmark-round" size="small" v-bind:loading="loading"  v-on:click="fixTask(item.id)"></Button>
+                      <Button shape="circle" v-bind:loading="btnLodingStatus[item.id]" icon="checkmark-round" size="small" v-on:click="fixTask(item.id)">Done</Button>
+                      <Button type="dashed" shape="circle" icon="trash-a" size="small" v-bind:loading="btnLodingStatus[item.id]" v-on:click="deleteTask(item.id)"></Button>
                     </div>
                 </div>
             </li>
@@ -68,8 +94,8 @@
                   {{ item.name }}
               </div>
               <div class="btn-finish">
-                <Button type="text" shape="circle" icon="reply" size="small" v-bind:loading="loading"  v-on:click="backTask(item.id)"></Button>
-                <Button type="text" shape="circle" icon="trash-a" size="small" v-bind:loading="loading"  v-on:click="deleteTask(item.id)"></Button>
+                <Button shape="circle" icon="reply" size="small" v-bind:loading="btnLodingStatus[item.id]" v-on:click="backTask(item.id)">Redo</Button>
+                <Button type="dashed" shape="circle" icon="trash-a" size="small" v-bind:loading="btnLodingStatus[item.id]" v-on:click="deleteTask(item.id)"></Button>
               </div>
             </div>
           </li>
@@ -85,10 +111,10 @@ export default {
   data () {
     return {
       currentTasks: [],
+      btnLodingStatus: {},
       lastTasks: [],
       finishedTasks: [],
-      taskName: '',
-      loading: false
+      taskName: ''
     }
   },
   mounted() {
@@ -99,6 +125,7 @@ export default {
       this.$Loading.start();
       var $this = this
       this.$http.get("http://api.oobss.com/tasks/main").then(function(response) {
+        $this.btnLodingStatus = {}
         $this.currentTasks = response.data.data.currentTasks
         $this.lastTasks = response.data.data.lastTasks
         $this.finishedTasks = response.data.data.finishedTasks
@@ -127,46 +154,42 @@ export default {
 
     },
     fixTask: function(taskId){
-      this.loading = true;
       var $this = this
+      this.$set(this.btnLodingStatus, taskId, true)
       this.$http.patch("http://api.oobss.com/tasks",{id:taskId}).then(function(response){
         if(response.data.retCode != 1){
             $this.$Message.error(response.data.errMsg);
         }
         $this.homeTasks()
-        $this.loading = false;
       }).catch(function(error) {
         console.log(error)
       })
     },
     backTask: function(taskId){
-      this.loading = true;
       var $this = this
+      this.$set(this.btnLodingStatus, taskId, true)
       this.$http.patch("http://api.oobss.com/tasks/back",{id:taskId}).then(function(response){
         if(response.data.retCode != 1){
             $this.$Message.error(response.data.errMsg);
         }
         $this.homeTasks()
-        $this.loading = false;
       }).catch(function(error) {
         console.log(error)
       })
     },
     deleteTask: function(taskId){
-      this.loading = true;
       var $this = this
       this.$http.delete("http://api.oobss.com/tasks",{params:{id:taskId}}).then(function(response){
         if(response.data.retCode != 1){
             $this.$Message.error(response.data.errMsg);
         }
         $this.homeTasks()
-        $this.loading = false;
       }).catch(function(error) {
         console.log(error)
       })
     },
     handleReachBottom (){
-
+      // alert('ok')
     }
   }
 }
