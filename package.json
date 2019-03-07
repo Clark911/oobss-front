@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "axios": "^0.17.1",
+    "element-ui": "^2.6.1",
     "express": "^4.15.2",
     "iview": "^2.8.0",
     "muse-ui": "^2.1.0",

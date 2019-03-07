@@ -25,15 +25,60 @@
   /* padding-top: 4px; */
   /* border: 1px solid black; */
 }
-.task-tooltip{
-  min-height: 100px;
-  max-width: 300px;
-  word-wrap: break-word;
-}
 </style>
 
 <template>
-  <div>
+<el-collapse accordion value="todo" :style="{height:'100%'}">
+  <el-collapse-item name="later">
+    <template slot="title">
+      拖后<i class="header-icon el-icon-info"></i>
+    </template>
+    <ul>
+      <li v-for="item in lastTasks" v-bind:key="item.id">
+        <div class="task" v-on:mouseenter="showBackBtn">
+          <div class="task-text">
+            {{ item.name }}({{item.time}})
+          </div>
+          <div class="btn-finish">
+            <el-button v-on:click="backTask(item.id)">Redo</el-button>
+            <el-button v-on:click="deleteTask(item.id)"></el-button>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </el-collapse-item>
+  <el-collapse-item title="今日待办" name="todo">
+    <ul>
+      <li v-for="item in currentTasks" v-bind:key="item.id">
+          <div class="task" v-on:mouseenter="showDoneBtn">
+              <div class="task-text">
+                {{ item.name }}
+              </div>
+              <div class="btn-finish">
+                <el-button v-bind:loading="btnLodingStatus[item.id]"  v-on:click="fixTask(item.id)">Done</el-button>
+                <el-button v-bind:loading="btnLodingStatus[item.id]" v-on:click="deleteTask(item.id)"></el-button>
+              </div>
+          </div>
+      </li>
+      </ul>
+  </el-collapse-item>
+  <el-collapse-item title="完成了" name="done">
+    <ul>
+    <li v-for="item in finishedTasks" v-bind:key="item.id">
+      <div class="task" v-on:mouseenter="showBackBtn">
+        <div class="task-text">
+            {{ item.name }}
+        </div>
+        <div class="btn-finish">
+          <el-button v-bind:loading="btnLodingStatus[item.id]" v-on:click="backTask(item.id)">Redo</el-button>
+          <el-button v-bind:loading="btnLodingStatus[item.id]" v-on:click="deleteTask(item.id)"></el-button>
+        </div>
+      </div>
+    </li>
+    </ul>
+  </el-collapse-item>
+</el-collapse>
+  <!-- <div>
     <Card>
       <div style="height: 200px">
         <h1>拖后</h1>
@@ -62,13 +107,9 @@
             <ul>
             <li v-for="item in currentTasks" v-bind:key="item.id">
                 <div class="task" v-on:mouseenter="showDoneBtn">
-                    <Tooltip max-width="200" placement="top">
+                    <Tooltip max-width="200" placement="top" v-bind:content="item.name">
                         <div class="task-text">
                           {{ item.name }}
-                        </div>
-                        <div slot="content" class="task-tooltip">
-                  <p>Select a topic, then pick a category and we'll show you commonly asked questions and answers.</p>
-<p>Looking for more help? Ask the community or create a ticket to get it routed to the best person to answer it.</p>
                         </div>
                     </Tooltip>
                     <div class="btn-finish">
@@ -103,7 +144,7 @@
         </Scroll>
       </div>
     </Card>
-  </div>
+  </div> -->
 </template>
 <script>
 export default {
@@ -122,17 +163,17 @@ export default {
   },
   methods: {
     homeTasks: function(){
-      this.$Loading.start();
+      // this.$Loading.start();
       var $this = this
       this.$http.get("http://api.oobss.com/tasks/main").then(function(response) {
         $this.btnLodingStatus = {}
         $this.currentTasks = response.data.data.currentTasks
         $this.lastTasks = response.data.data.lastTasks
         $this.finishedTasks = response.data.data.finishedTasks
-        $this.$Loading.finish();
+        // $this.$Loading.finish();
       }).catch(function(error) {
         console.log(error)
-        $this.$Loading.error();
+        // $this.$Loading.error();
       })
     },
     putTask: function() {

@@ -5,15 +5,16 @@
         position: relative;
         border-radius: 4px;
         overflow: hidden;
+        height: 100%;
     }
 </style>
 <template>
     <div class="layout" id="app">
-        <Layout :style="{marginLeft: '0'}">
-            <Content :style="{padding: '0 16px 16px'}">
+        <el-container :style="{height:'100%'}">
+            <el-main :style="{height:'100%'}">
                 <router-view/>
-            </Content>
-        </Layout>
+            </el-main>
+        </el-container>
     </div>
 </template>
 <script>
