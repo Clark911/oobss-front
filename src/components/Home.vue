@@ -1,11 +1,13 @@
 <style scoped>
-
+.task-cell{
+  height: 20px;
+}
 </style>
 
 <template>
   <el-collapse accordion value="todo" :style="{height:'100%'}">
     <el-collapse-item title="拖后" name="later">
-      <el-table :data="lastTasks" style="width: 100%" :showHeader=false>
+      <el-table :data="lastTasks" style="width: 100%" :showHeader=false :cell-class-name="task-cell">
         <el-table-column
           label="任务"
           prop="name">
@@ -31,6 +33,9 @@
           </template>
         </el-table-column>
       </el-table>
+      <el-input placeholder="添加任务······" v-model="taskName">
+        <el-button slot="append" icon="el-icon-search" v-on:click="putTask"></el-button>
+      </el-input>
     </el-collapse-item>
     <el-collapse-item title="完成了" name="done">
       <ul>
